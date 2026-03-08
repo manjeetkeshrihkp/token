@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token Generation - Parul University</title>
+    <style>
+        /* Base Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Background */
+        body {
+            background-color: #f8f9fb;
+            background-image: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(0, 0, 0, 0.02) 10px,
+                rgba(0, 0, 0, 0.02) 11px
+            );
+            min-height: 100vh; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 80px; 
+        }
+
+        /* Header / Logo Area */
+        header {
+            margin-top: 40px;
+            margin-bottom: 60px;
+        }
+
+        header img {
+            height: 60px;
+            object-fit: contain;
+        }
+
+        /* Main Card Container */
+        .card {
+            background-color: #ffffff;
+            width: 90%;
+            max-width: 550px;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            display: none; /* Hidden by default */
+        }
+
+        .card.active {
+            display: block;
+        }
+
+        .card label {
+            display: block;
+            font-size: 15px;
+            font-weight: 700;
+            color: #111;
+            margin-bottom: 10px;
+        }
+
+        .required {
+            color: red;
+        }
+
+        /* Error message text */
+        .error-text {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none; 
+        }
+
+        /* Dropdown & Input Styling */
+        select, input[type="email"], input[type="tel"], input[type="text"], input[type="date"] {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 14px;
+            color: #333;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            background-color: #fff;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none; 
+        }
+
+        select:disabled {
+            background-color: #f3f4f6;
+            cursor: not-allowed;
+            color: #9ca3af;
+        }
+
+        select:focus, input:focus {
+            border-color: #6b7280; 
+        }
+
+        /* Mobile Input Layout */
+        .input-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .mobile-wrapper {
+            display: flex;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            overflow: hidden;
+            background-color: #fff;
+        }
+
+        .mobile-wrapper:focus-within {
+            border-color: #6b7280;
+        }
+
+        .country-code {
+            padding: 10px 15px;
+            background-color: #fff;
+            border-right: 1px solid #d1d5db;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .flag-icon {
+            width: 20px;
+            height: auto;
+            border-radius: 2px;
+        }
+
+        .country-code span.arrow {
+            font-size: 10px;
+            color: #666;
+        }
+
+        .mobile-wrapper input {
+            flex: 1;
+            padding: 12px 15px;
+            border: none;
+            outline: none;
+            font-size: 14px;
+        }
+
+        /* Next Button */
+        .next-btn {
+            background-color: #6e94ff;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .next-btn:hover {
+            background-color: #587bf2;
+        }
+
+        /* Footer */
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #000000;
+            text-align: center;
+            padding: 15px 0;
+            border-top: 4px solid #ed1c24; 
+            border-bottom: 4px solid #ed1c24;
+            z-index: 1000;
+        }
+
+        footer p {
+            font-weight: 600;
+            font-size: 15px;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- STEP 3 SPECIFIC STYLES --- */
+        #step-3-container {
+            width: 90%;
+            max-width: 550px;
+            display: none; 
+        }
+
+        .notification-box {
+            background-color: #ffffff;
+            border: 1px solid #8ba4f9;
+            color: #6e94ff;
+            padding: 20px;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        .otp-header {
+            font-size: 15px;
+            color: #888;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+
+        .change-number {
+            color: #6e94ff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .action-group {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .resend-btn {
+            color: #444;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        
+        #step-4-container label {
+            font-weight: 500;
+            font-size: 14px;
+            color: #555;
+        }
+
+        /* --- Tag Input Styles --- */
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            background-color: #fff;
+            min-height: 48px;
+            align-items: center;
+        }
+        
+        .tag-container:focus-within {
+            border-color: #6b7280;
+        }
+
+        .tag {
+            background-color: #e0e7ff; 
+            color: #3730a3;
+            padding: 5px 12px;
+            border-radius: 16px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+
+        .tag-close {
+            cursor: pointer;
+            font-weight: bold;
+            color: #6366f1;
+            font-size: 14px;
+        }
+
+        .tag-close:hover {
+            color: #ef4444;
+        }
+
+        .tag-input {
+            border: none !important;
+            outline: none !important;
+            padding: 5px !important;
+            flex: 1;
+            min-width: 150px;
+            font-size: 14px;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        /* --- CUSTOM SEARCHABLE DROPDOWN STYLES --- */
+        .custom-select-wrapper {
+            position: relative;
+            width: 100%;
+            user-select: none;
+        }
+
+        .custom-select-trigger {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 14px;
+            color: #333;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            background-color: #fff;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .custom-select-wrapper.disabled .custom-select-trigger {
+            background-color: #f3f4f6;
+            cursor: not-allowed;
+            color: #9ca3af;
+        }
+
+        .custom-select-wrapper.open .custom-select-trigger {
+            border-color: #6b7280;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        .custom-select-trigger .arrow {
+            font-size: 10px;
+            color: #666;
+            transition: transform 0.3s;
+        }
+
+        .custom-select-wrapper.open .custom-select-trigger .arrow {
+            transform: rotate(180deg);
+        }
+
+        .custom-select-panel {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: #fff;
+            border: 1px solid #d1d5db;
+            border-top: none;
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+            display: none;
+        }
+
+        .custom-select-wrapper.open .custom-select-panel {
+            display: block;
+        }
+
+        .custom-select-search {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .custom-select-search input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .custom-options-list {
+            list-style: none;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .custom-options-list li {
+            padding: 10px 15px;
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+            border-bottom: 1px solid #f9f9f9;
+            transition: background-color 0.2s;
+        }
+
+        .custom-options-list li:last-child {
+            border-bottom: none;
+        }
+
+        .custom-options-list li:hover {
+            background-color: #eef2ff;
+            color: #4f46e5;
+        }
+
+        .custom-options-list li.no-results {
+            color: #888;
+            font-style: italic;
+            cursor: default;
+        }
+        .custom-options-list li.no-results:hover {
+            background-color: transparent;
+            color: #888;
+        }
+
+        /* --- STEP 5: FINAL TOKEN STYLES --- */
+        #step-5-container {
+            padding: 30px; 
+            text-align: left;
+        }
+
+        .yellow-alert {
+            border: 1px solid #eab308;
+            color: #eab308;
+            background-color: #ffffff;
+            padding: 15px 20px;
+            border-radius: 4px;
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        .token-text-large {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            line-height: 1.3;
+            margin-bottom: 5px;
+        }
+
+        .token-text-medium {
+            font-size: 28px;
+            font-weight: 500;
+            color: #333;
+            line-height: 1.3;
+        }
+
+        .steps-heading {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .steps-list {
+            margin-left: 0;
+            padding-left: 20px;
+            font-size: 14px;
+            color: #444;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        .pill-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .pill-btn:hover {
+            opacity: 0.9;
+        }
+
+        .red-btn { 
+            background-color: #f43f5e; 
+            margin-bottom: 10px;
+        }
+
+        .teal-btn { 
+            background-color: #0d9488; 
+            margin-bottom: -10px; 
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="https://cdn.admissions.paruluniversity.ac.in/asset_library/2025/09/image/png/logo.png" alt="Parul University Logo">
+    </header>
+
+    <div id="step-1" class="card active">
+        <label for="queue-select">Select Queue</label>
+        <select id="queue-select" onchange="goToStep2()">
+            <option value="" disabled selected>Select</option>
+            <option value="Admission Cell - A">Admission Cell - A</option>
+            <option value="Admission Cell - B">Admission Cell - B</option>
+            <option value="Admission Cell - C">Admission Cell - C</option>
+            <option value="Admission Cell - Design">Admission Cell - Design</option>
+            <option value="Admission Cell - Placement Cell">Admission Cell - Placement Cell</option>
+            <option value="Admission Cell - WIP">Admission Cell - WIP</option>
+            <option value="Campus Reporting Venue">Campus Reporting Venue</option>
+            <option value="Vadodara Office">Vadodara Office</option>
+        </select>
+    </div>
+
+    <div id="step-2" class="card">
+        <div class="input-group">
+            <label>Mobile Number <span class="required">*</span></label>
+            <div class="mobile-wrapper">
+                <div class="country-code">
+                    <img src="https://flagcdn.com/w20/in.png" alt="India Flag" class="flag-icon"> 
+                    <span class="arrow">▼</span>
+                </div>
+                <input type="tel" id="mobile-number" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="">
+            </div>
+            <div id="mobile-error" class="error-text">Please enter a valid 10-digit mobile number.</div>
+        </div>
+
+        <div class="input-group">
+            <label>Email ID</label>
+            <input type="email" id="email-id" placeholder="">
+            <div id="email-error" class="error-text">Please enter a valid email address.</div>
+        </div>
+
+        <button class="next-btn" onclick="submitDetails()">Next</button>
+    </div>
+
+    <div id="step-3-container">
+        <div class="notification-box">
+            A one time password has been sent to your mobile number
+        </div>
+        
+        <div class="card active" style="width: 100%;">
+            <div class="otp-header">
+                OTP for <span id="display-number"></span> <a href="#" onclick="goBackToStep2(event)" class="change-number">Change Number</a>
+            </div>
+
+            <div class="input-group">
+                <label>Enter One Time Password <span class="required">*</span></label>
+                <input type="text" id="otp-input" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="">
+                <div id="otp-error" class="error-text">Invalid OTP. Please enter 1234.</div>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="whatsapp-notify">
+                <label for="whatsapp-notify">Want Notifications on WhatsApp?</label>
+            </div>
+
+            <div class="action-group">
+                <button class="next-btn" onclick="verifyOtp()">Next</button>
+                <span class="resend-btn">Resend OTP</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="step-4-container" class="card">
+        
+        <div class="input-group">
+            <label>Name:</label>
+            <input type="text" id="user-name-input">
+        </div>
+
+        <div class="input-group">
+            <label>Alternate Mobile:</label>
+            <div class="mobile-wrapper">
+                <div class="country-code">
+                    <img src="https://flagcdn.com/w20/in.png" alt="India Flag" class="flag-icon"> 
+                    <span class="arrow">▼</span>
+                </div>
+                <input type="tel" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Father's Name:</label>
+            <input type="text">
+        </div>
+
+        <div class="input-group">
+            <label>Mother's Name:</label>
+            <input type="text">
+        </div>
+
+        <div class="input-group">
+            <label>Father's Occupation:</label>
+            <input type="text">
+        </div>
+
+        <div class="input-group">
+            <label>Date of Birth:</label>
+            <input type="date">
+        </div>
+
+        <div class="input-group">
+            <label>Nationality:</label>
+            <input type="text">
+        </div>
+
+        <div class="input-group">
+            <label>Gender: <span class="required">*</span></label>
+            <select>
+                <option value="" disabled selected hidden>Select</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Admission Session:</label>
+            <select>
+                <option value="" disabled selected hidden>Select</option>
+                <option value="2026-27">2026-27</option>
+                <option value="2025-26">2025-26</option>
+                <option value="2024-25">2024-25</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Course:</label>
+            <div class="custom-select-wrapper" id="custom-course-wrapper">
+                <div class="custom-select-trigger" onclick="toggleCustomDropdown('custom-course-wrapper')">
+                    <span id="course-selected-text" style="color: #888;">Select Course...</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="custom-select-panel">
+                    <div class="custom-select-search">
+                        <input type="text" id="course-search-input" placeholder="Search courses..." oninput="filterCustomOptions('course-search-input', 'course-options-list')">
+                    </div>
+                    <ul class="custom-options-list" id="course-options-list">
+                        </ul>
+                </div>
+                <input type="hidden" id="hidden-course-val">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Program: <span class="required">*</span></label>
+            <div class="custom-select-wrapper disabled" id="custom-program-wrapper">
+                <div class="custom-select-trigger" onclick="toggleCustomDropdown('custom-program-wrapper')">
+                    <span id="program-selected-text" style="color: #9ca3af;">Select Program...</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="custom-select-panel">
+                    <div class="custom-select-search">
+                        <input type="text" id="program-search-input" placeholder="Search programs..." oninput="filterCustomOptions('program-search-input', 'program-options-list')">
+                    </div>
+                    <ul class="custom-options-list" id="program-options-list">
+                        </ul>
+                </div>
+                <input type="hidden" id="hidden-program-val">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Address:</label>
+            <input type="text">
+        </div>
+
+        <div class="input-group">
+            <label>Caste Category:</label>
+            <select>
+                <option value="" disabled selected hidden>Select</option>
+                <option value="General">General</option>
+                <option value="OBC">OBC</option>
+                <option value="SC">SC</option>
+                <option value="ST">ST</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Country: <span class="required">*</span></label>
+            <select>
+                <option value="" disabled selected hidden>Select</option>
+                <option value="India">India</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>State:</label>
+            <select id="state-select" onchange="populateCities()">
+                <option value="" disabled selected hidden>Select State</option>
+                <option value="Andhra Pradesh">Andhra Pradesh</option>
+                <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                <option value="Assam">Assam</option>
+                <option value="Bihar">Bihar</option>
+                <option value="Chhattisgarh">Chhattisgarh</option>
+                <option value="Goa">Goa</option>
+                <option value="Gujarat">Gujarat</option>
+                <option value="Haryana">Haryana</option>
+                <option value="Himachal Pradesh">Himachal Pradesh</option>
+                <option value="Jharkhand">Jharkhand</option>
+                <option value="Karnataka">Karnataka</option>
+                <option value="Kerala">Kerala</option>
+                <option value="Madhya Pradesh">Madhya Pradesh</option>
+                <option value="Maharashtra">Maharashtra</option>
+                <option value="Manipur">Manipur</option>
+                <option value="Meghalaya">Meghalaya</option>
+                <option value="Mizoram">Mizoram</option>
+                <option value="Nagaland">Nagaland</option>
+                <option value="Odisha">Odisha</option>
+                <option value="Punjab">Punjab</option>
+                <option value="Rajasthan">Rajasthan</option>
+                <option value="Sikkim">Sikkim</option>
+                <option value="Tamil Nadu">Tamil Nadu</option>
+                <option value="Telangana">Telangana</option>
+                <option value="Tripura">Tripura</option>
+                <option value="Uttar Pradesh">Uttar Pradesh</option>
+                <option value="Uttarakhand">Uttarakhand</option>
+                <option value="West Bengal">West Bengal</option>
+                <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                <option value="Chandigarh">Chandigarh</option>
+                <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
+                <option value="Delhi">Delhi</option>
+                <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                <option value="Lakshadweep">Lakshadweep</option>
+                <option value="Puducherry">Puducherry</option>
+                <option value="Ladakh">Ladakh</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>City:</label>
+            <select id="city-select" disabled>
+                <option value="" disabled selected hidden>Select City</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Interested In Pathway Program?:</label>
+            <select>
+                <option value="" disabled selected hidden>Select</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Interested In Dual Degree Program?:</label>
+            <select>
+                <option value="" disabled selected hidden>Select</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Is Alumni?: <span class="required">*</span></label>
+            <select>
+                <option value="" disabled selected hidden>Select</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Subjects:</label>
+            <div class="tag-container" id="tag-container">
+                <select class="tag-input" id="subject-select" onchange="addSubjectTag()">
+                    <option value="" disabled selected>Select a subject...</option>
+                    <option value="Physics">Physics</option>
+                    <option value="Chemistry">Chemistry</option>
+                    <option value="Mathematics">Mathematics</option>
+                    <option value="Biology">Biology</option>
+                    <option value="Computer Science">Computer Science</option>
+                    <option value="English">English</option>
+                </select>
+            </div>
+        </div>
+
+        <button class="next-btn" onclick="generateToken()">NEXT STEP</button>
+
+    </div>
+
+    <div id="step-5-container" class="card">
+        <div class="yellow-alert">
+            Application exists for the program
+        </div>
+
+        <div id="final-name" class="token-text-large" style="text-transform: uppercase;">NAME (0000000)</div>
+        <div class="token-text-medium">Your Token Number:</div>
+        <div id="final-token" class="token-text-large" style="margin-bottom: 20px;">A-000</div>
+        
+        <div class="steps-heading">Steps To Confirm Your Admission</div>
+        <ol class="steps-list">
+            <li>Meet Our Admission Expert at Admission Cell.</li>
+            <li>Admission Confirmation & Document Submission at Admission Cell - A.</li>
+            <li>MIS Registration at Room No. 119.</li>
+            <li>Academic Fees Payment at Student Section, Central Administrative Block.</li>
+            <li>Hostel/Transport Registration at Student Section, Central Administrative Block.</li>
+        </ol>
+
+        <button class="pill-btn red-btn" onclick="location.reload()">Close</button>
+        <button class="pill-btn teal-btn" onclick="window.print()">Print</button>
+    </div>
+
+    <footer>
+        <p>THIS IS WHERE YOU BEGIN... THE FUTURE IS TODAY</p>
+    </footer>
+
+    <script>
+        let userData = {
+            queue: '',
+            mobile: '',
+            email: ''
+        };
+
+        function goToStep2() {
+            const selectElement = document.getElementById('queue-select');
+            userData.queue = selectElement.value;
+            if (userData.queue) {
+                document.getElementById('step-1').classList.remove('active');
+                document.getElementById('step-2').classList.add('active');
+            }
+        }
+
+        function submitDetails() {
+            const mobileInput = document.getElementById('mobile-number').value;
+            const emailInput = document.getElementById('email-id').value;
+            
+            const mobileError = document.getElementById('mobile-error');
+            const emailError = document.getElementById('email-error');
+            
+            mobileError.style.display = 'none';
+            emailError.style.display = 'none';
+
+            let isValid = true;
+
+            if (mobileInput.length !== 10) {
+                mobileError.style.display = 'block';
+                isValid = false;
+            }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (emailInput !== '' && !emailRegex.test(emailInput)) {
+                emailError.style.display = 'block';
+                isValid = false;
+            }
+
+            if (isValid) {
+                userData.mobile = mobileInput;
+                userData.email = emailInput;
+                document.getElementById('step-2').classList.remove('active');
+                document.getElementById('step-3-container').style.display = 'block';
+                document.getElementById('display-number').innerText = '+91' + userData.mobile + ' ';
+            }
+        }
+
+        function goBackToStep2(event) {
+            event.preventDefault(); 
+            document.getElementById('step-3-container').style.display = 'none';
+            document.getElementById('step-2').classList.add('active');
+        }
+
+        function verifyOtp() {
+            const otpInput = document.getElementById('otp-input').value;
+            const otpError = document.getElementById('otp-error');
+
+            if (otpInput === '1234') {
+                otpError.style.display = 'none';
+                document.getElementById('step-3-container').style.display = 'none';
+                document.getElementById('step-4-container').classList.add('active');
+            } else {
+                otpError.style.display = 'block';
+            }
+        }
+    </script>
+
+    <script>
+        const courseProgramMap = {
+            "ANM": ["ANM"],
+            "B.Arch": ["B.Arch"],
+            "B.Com B.Ed": ["B.Com B.Ed"],
+            "B.Com": ["Accounting and Finance", "Banking and Insurance", "Human Resource Management", "Marketing"],
+            "B.Com - (Hons.)": ["Accounting and Finance", "Banking and Insurance", "Human Resource Management", "Marketing"],
+            "B.Com - (Hons.) in Investment Management With CFA Preparation": ["B.Com - (Hons.) in Investment Management With CFA Preparation"],
+            "B.Com - (Hons.) With ACCA Certification": ["B.Com - (Hons.) With ACCA Certification"],
+            "B.Com - (Hons.) With Integrated CA Preparation": ["B.Com - (Hons.) With Integrated CA Preparation"],
+            "B.Des": ["Communication Design", "Fashion Design and Technology", "Interior and Furniture Design", "Product Design", "User Experience & Interaction Design (with Al)", "Building and Infrastructure", "Interior Design"],
+            "B.Lib.I.Sc": ["B.Lib.I.Sc"],
+            "B.Pharm": ["B.Pharm"],
+            "B.Pharm. - LE": ["B.Pharm. - LE"],
+            "B.Sc B.Ed": ["B.Sc B.Ed"],
+            "B.Sc": ["Biochemistry", "Biotechnology", "Chemistry", "Environmental Science", "Food Technology", "Forensic Science", "Genetics", "Geology", "Mathematics", "Microbiology", "Nutrition and Dietetics", "Physics", "Animation and VFX", "Film and TV Production", "Hotel Management", "Public Health"],
+            "B.Sc - IT": ["B.Sc - IT"],
+            "B.Sc - IT (Hons.)": ["B.Sc - IT (Hons.)"],
+            "B.Sc - Nursing": ["B.Sc - Nursing"],
+            "B.Sc (Hons.)": ["Biochemistry", "Biotechnology", "Chemistry", "Environmental Science", "Food Technology", "Forensic Science", "Genetics", "Geology", "Mathematics", "Microbiology", "Nutrition and Dietetics", "Physics", "Animation and VFX", "Film and TV Production", "Public Health"],
+            "B.Sc Agriculture (Hons.)": ["B.Sc Agriculture (Hons.)"],
+            "B.Tech": ["Aerospace Engineering", "Aeronautical Engineering", "Agricultural Engineering", "Artificial Intelligence and Data Science", "Artificial Intelligence and Data Science (Quantum Technologies)", "Automobile Engineering", "Biomedical Engineering", "Biotechnology", "Chemical Engineering", "Civil Engineering", "Computer Engineering", "Computer Science and Engineering (Artificial Intelligence, Artificial Intelligence and Machine Learning, Big Data Analytics, Cloud Computing, Cyber Security)", "Dairy Technology", "Electrical Engineering", "Electronics and Communication Engineering", "Electronics and Communication Engineering (VLSI Design and Technology)", "Food Technology", "Information Technology", "Mathematics and Computing", "Mechanical Engineering", "Mechatronics Engineering", "Petroleum Engineering", "Quantum Computing in Al", "Robotics and Automation", "Robotics and Artificial Intelligence"],
+            "B.Tech - WIP": ["B.Tech - WIP"],
+            "B.Tech (Hons.)": ["Electrical Engineering (Electric Vehicles)", "Mechanical Engineering (Electric Vehicles)"],
+            "B.Tech LE": ["B.Tech LE"],
+            "BA": ["Economics", "English", "Geography", "Journalism and Mass Communication", "History", "Political Science", "Psychology", "Sociology", "Administration and Governance"],
+            "BA (Hons)": ["Economics", "English", "Geography", "Journalism and Mass Communication", "History", "Political Science", "Psychology", "Sociology"],
+            "BA B.Ed": ["BA B.Ed"],
+            "BBA": ["Data Analytics", "Digital Marketing", "Financial Management", "Healthcare Management", "Human Resource", "International Business", "Logistics and Supply Chain Management", "Marketing", "Technology Management", "Aviation, Hospitality, Travel and Tourism Management"],
+            "BBA (Hons)": ["Data Analytics", "Digital Marketing", "Financial Management", "Healthcare Management", "Human Resource", "International Business", "Logistics and Supply Chain Management", "Marketing", "Technology Management", "Aviation, Hospitality, Travel and Tourism Management"],
+            "BBA - Investment Management With CFA": ["BBA - Investment Management With CFA"],
+            "BCA": ["BCA"],
+            "BCA (Hons)": ["BCA (Hons)"],
+            "BHMCT": ["BHMCT"],
+            "BHMS": ["BHMS"],
+            "BPA": ["Dance", "Drama", "Music"],
+            "BPA (Hons)": ["Dance", "Drama", "Music"],
+            "BPES": ["BPES"],
+            "BPT": ["BPT"],
+            "BSW": ["BSW"],
+            "BSW (Hons)": ["BSW (Hons)"],
+            "BVA": ["Applied Arts", "Painting", "Sculpture"],
+            "BAMS": ["BAMS"],
+            "MBBS": ["MBBS"],
+            "MBA (1 Year Program)": ["Advertising and Branding Management", "Agribusiness Management", "Artificial Intelligence and Technology Management", "Banking and Financial Services", "Business Analytics", "Digital Marketing and Sales", "Finance", "Fintech Management", "Healthcare Management", "Human Resource", "International Trade and Business", "Logistics and Supply Chain Management", "Marketing", "Operations Management", "Pharmaceutical Management", "Project Management", "Tourism and Event Management"],
+            "MBA (2 Years Program)": ["Advertising and Branding Management", "Agribusiness Management", "Artificial Intelligence and Technology Management", "Banking and Financial Services", "Business Analytics", "Digital Marketing and Sales", "Finance", "Fintech Management", "Healthcare Management", "Human Resource", "Innovation Entrepreneurship and Family Owned Business", "International Trade and Business", "Logistics and Supply Chain Management", "Marketing", "Operations Management", "Pharmaceutical Management", "Project Management", "Tourism and Event Management", "Investment Management with CFA Preparation", "Entrepreneurship, Innovation and Startup Acceleration"],
+            "MCA (1 Year Program)": ["Artificial Intelligence", "Cloud Computing", "Big Data Analytics", "Full Stack Web Development", "Cyber Security and Forensics"],
+            "MCA (2 Years Program)": ["Artificial Intelligence", "Big Data Analytics", "Cyber Security and Forensics", "Cloud Computing", "Full Stack Web Development"],
+            "M.Tech": ["Artificial Intelligence and Data Science", "Computer Science and Engineering (Cyber Security)", "Computer Engineering", "Aerospace Engineering", "Food Technology", "Automation and Robotics", "Biomedical Engineering", "CAD/CAM", "Chemical Engineering", "Construction Project Management", "Information Technology", "Material Engineering", "Mechatronics Engineering", "Structural Engineering", "Transportation Engineering"],
+            "M.Sc": ["Applied Mathematics", "Biochemistry", "Bioinformatics and Computational Biology", "Biopharmaceutical Technology", "Biotechnology", "Industrial Chemistry (Production)", "Microbiology", "Chemistry (Organics | Analytical | Quality Assurance)", "Nutrition and Dietetics", "Environmental Science", "Food Technology", "Forensic Science (Digital Forensic, Forensic Biology, Serology and DNA, Forensic Chemistry & Toxicology, Forensic Physics, Multimedia and Ballistics, Forensic Criminology and Forensic Psychology, Questioned Documents, Fingerprint and Photography)", "Genetics", "Geology", "Industrial Chemistry", "Physics", "Agriculture (Agronomy, Agricultural Extension and Communication, Agricultural Economics, Entomology, Genetics and Plant Breeding, Plant Pathology, Soil Science and Agricultural Chemistry)", "Clinical Embryology and Reproductive Biology", "Anatomy", "Physiology", "Pharmacology"],
+            "M.Sc - IT": ["Artificial Intelligence", "Cloud Computing", "Big Data Analytics", "Full Stack Web Development", "Cyber Security and Forensics"],
+            "M.Sc - Data Science": ["M.Sc - Data Science"],
+            "M.Sc - Nursing": ["Child Health Nursing", "Community Health Nursing", "Medical Surgical Nursing", "Obstetric and Gynaecological Nursing", "Mental Health Nursing"],
+            "M.Com": ["Accounting and Finance", "Human Resource Management", "Banking and Insurance", "Marketing Management"],
+            "M.Pharm": ["Pharmaceutical Analysis", "Pharmaceutics", "Pharmaceutical Quality Assurance", "Pharmacology", "Pharmaceutical Technology", "Regulatory Affairs", "Pharmaceutical Chemistry", "Phytopharmacy and Phytomedicine", "Pharmacy Practice", "Industrial Pharmacy"],
+            "LL.B": ["LL.B"],
+            "LL.M": ["Business and Corporate Law", "Criminal and Security Laws", "Constitutional and Administrative Law", "Intellectual Property Rights"],
+            "GNM": ["GNM"],
+            "D.Pharm": ["D.Pharm"],
+            "DHMCT": ["DHMCT"],
+            "Diploma in Journalism": ["Diploma in Journalism"],
+            "Diploma in Robotics and Automation": ["Diploma in Robotics and Automation"],
+            "Diploma in Industrial Automation": ["Diploma in Industrial Automation"],
+            "Diploma in Cyber Crimes and Security Laws": ["Diploma in Cyber Crimes and Security Laws"],
+            "Certificate Program in Cyber Security": ["Certificate Program in Cyber Security"],
+            "Certificate Program in Business Analytics": ["Certificate Program in Business Analytics"],
+            "Certificate Program in Digital Marketing": ["Certificate Program in Digital Marketing"],
+            "Certificate Program in Full Stack Developer": ["Certificate Program in Full Stack Developer"],
+            "Certificate Program in Cloud Computing": ["Certificate Program in Cloud Computing"],
+            "Certificate Program in Interior Designing": ["Certificate Program in Interior Designing"],
+            "Certificate Program in VFX and Animation": ["Certificate Program in VFX and Animation"],
+            "Certificate Program in Photography and Cinematography": ["Certificate Program in Photography and Cinematography"],
+            "Certificate Program in Fashion Designing": ["Certificate Program in Fashion Designing"],
+            "Post Graduate Diploma in Digital and Social Media Marketing": ["Post Graduate Diploma in Digital and Social Media Marketing"],
+            "Post Graduate Diploma in Labour law": ["Post Graduate Diploma in Labour law"],
+            "Post Graduate Diploma in Intellectual Property Rights": ["Post Graduate Diploma in Intellectual Property Rights"]
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const courseList = document.getElementById('course-options-list');
+            Object.keys(courseProgramMap).forEach(course => {
+                let li = document.createElement('li');
+                li.textContent = course;
+                li.onclick = () => selectCourse(course);
+                courseList.appendChild(li);
+            });
+        });
+
+        function toggleCustomDropdown(wrapperId) {
+            const wrapper = document.getElementById(wrapperId);
+            if (wrapper.classList.contains('disabled')) return;
+            
+            document.querySelectorAll('.custom-select-wrapper').forEach(el => {
+                if (el.id !== wrapperId) el.classList.remove('open');
+            });
+            
+            wrapper.classList.toggle('open');
+            if(wrapper.classList.contains('open')){
+                const searchInput = wrapper.querySelector('.custom-select-search input');
+                if(searchInput) searchInput.focus();
+            }
+        }
+
+        function filterCustomOptions(inputId, listId) {
+            const filter = document.getElementById(inputId).value.toUpperCase();
+            const ul = document.getElementById(listId);
+            const li = ul.getElementsByTagName('li');
+            let hasResults = false;
+
+            const existingNoResult = ul.querySelector('.no-results');
+            if (existingNoResult) existingNoResult.remove();
+
+            for (let i = 0; i < li.length; i++) {
+                if(li[i].className === 'no-results') continue;
+                let txtValue = li[i].textContent || li[i].innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                    hasResults = true;
+                } else {
+                    li[i].style.display = "none";
+                }
+            }
+
+            if(!hasResults && filter !== "") {
+                let noLi = document.createElement('li');
+                noLi.className = 'no-results';
+                noLi.textContent = "No options found";
+                ul.appendChild(noLi);
+            }
+        }
+
+        function selectCourse(val) {
+            document.getElementById('course-selected-text').textContent = val;
+            document.getElementById('course-selected-text').style.color = "#333";
+            document.getElementById('hidden-course-val').value = val;
+            document.getElementById('custom-course-wrapper').classList.remove('open');
+            
+            populateCustomPrograms(val);
+        }
+
+        function populateCustomPrograms(courseVal) {
+            const programWrapper = document.getElementById('custom-program-wrapper');
+            const programList = document.getElementById('program-options-list');
+            const programText = document.getElementById('program-selected-text');
+            const hiddenProgram = document.getElementById('hidden-program-val');
+            
+            programList.innerHTML = ''; 
+            programText.textContent = 'Select Program...';
+            programText.style.color = '#9ca3af';
+            hiddenProgram.value = '';
+
+            if (courseVal && courseProgramMap[courseVal]) {
+                const programs = courseProgramMap[courseVal];
+                programs.forEach(program => {
+                    let li = document.createElement('li');
+                    li.textContent = program;
+                    li.onclick = () => selectProgram(program);
+                    programList.appendChild(li);
+                });
+                programWrapper.classList.remove('disabled');
+            } else {
+                programWrapper.classList.add('disabled');
+            }
+        }
+
+        function selectProgram(val) {
+            document.getElementById('program-selected-text').textContent = val;
+            document.getElementById('program-selected-text').style.color = "#333";
+            document.getElementById('hidden-program-val').value = val;
+            document.getElementById('custom-program-wrapper').classList.remove('open');
+        }
+
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.custom-select-wrapper')) {
+                document.querySelectorAll('.custom-select-wrapper').forEach(el => {
+                    el.classList.remove('open');
+                });
+            }
+        });
+
+    </script>
+
+    <script>
+        function addSubjectTag() {
+            const select = document.getElementById('subject-select');
+            const value = select.value;
+            if (value !== '') {
+                createTag(value);
+                select.selectedIndex = 0; 
+            }
+        }
+
+        function createTag(text) {
+            const tagContainer = document.getElementById('tag-container');
+            const existingTags = tagContainer.querySelectorAll('.tag span:first-child');
+            for (let tag of existingTags) {
+                if (tag.innerText === text) return;
+            }
+            const tag = document.createElement('div');
+            tag.className = 'tag';
+            const tagText = document.createElement('span');
+            tagText.innerText = text;
+            const closeBtn = document.createElement('span');
+            closeBtn.className = 'tag-close';
+            closeBtn.innerText = '×';
+            closeBtn.onclick = function() { tag.remove(); };
+            tag.appendChild(tagText);
+            tag.appendChild(closeBtn);
+            tagContainer.insertBefore(tag, document.getElementById('subject-select'));
+        }
+
+        // EXPANDED CITIES LIST
+        const stateCityMap = {
+            "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Nellore", "Tirupati", "Kurnool", "Kakinada", "Rajahmundry", "Kadapa", "Anantapur"],
+            "Arunachal Pradesh": ["Itanagar", "Naharlagun", "Pasighat", "Roing", "Tezu", "Tawang", "Ziro", "Bomdila", "Khonsa"],
+            "Assam": ["Guwahati", "Silchar", "Dibrugarh", "Jorhat", "Nagaon", "Tinsukia", "Tezpur", "Bongaigaon", "Diphu", "Dhubri"],
+            "Bihar": ["Patna", "Gaya", "Bhagalpur", "Muzaffarpur", "Munger", "Purnia", "Darbhanga", "Arrah", "Begusarai", "Katihar", "Chapra"],
+            "Chhattisgarh": ["Raipur", "Bhilai", "Bilaspur", "Korba", "Durg", "Rajnandgaon", "Raigarh", "Jagdalpur", "Ambikapur"],
+            "Goa": ["Panaji", "Vasco da Gama", "Margao", "Mapusa", "Ponda", "Bicholim", "Curchorem", "Sanquelim"],
+            "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar", "Jamnagar", "Junagadh", "Gandhinagar", "Anand", "Navsari", "Morbi"],
+            "Haryana": ["Faridabad", "Gurugram", "Panipat", "Ambala", "Rohtak", "Hisar", "Karnal", "Sonipat", "Panchkula", "Yamunanagar"],
+            "Himachal Pradesh": ["Shimla", "Mandi", "Dharamshala", "Solan", "Kullu", "Palampur", "Baddi", "Nahan", "Bilaspur"],
+            "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad", "Bokaro", "Deoghar", "Phusro", "Hazaribagh", "Giridih", "Ramgarh"],
+            "Karnataka": ["Bengaluru", "Mysuru", "Hubballi", "Mangaluru", "Belagavi", "Davanagere", "Ballari", "Vijayapura", "Shivamogga", "Tumakuru"],
+            "Kerala": ["Thiruvananthapuram", "Kochi", "Kozhikode", "Thrissur", "Kollam", "Alappuzha", "Palakkad", "Malappuram", "Kannur", "Kottayam"],
+            "Madhya Pradesh": ["Indore", "Bhopal", "Jabalpur", "Gwalior", "Ujjain", "Sagar", "Dewas", "Satna", "Ratlam", "Rewa", "Katni"],
+            "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Thane", "Nashik", "Aurangabad", "Solapur", "Amravati", "Kolhapur", "Navi Mumbai", "Jalgaon"],
+            "Manipur": ["Imphal", "Thoubal", "Bishnupur", "Churachandpur", "Kakching", "Ukhrul", "Senapati"],
+            "Meghalaya": ["Shillong", "Tura", "Nongstoin", "Jowai", "Baghmara", "Williamnagar", "Resubelpara"],
+            "Mizoram": ["Aizawl", "Lunglei", "Saiha", "Champhai", "Kolasib", "Serchhip", "Lawngtlai"],
+            "Nagaland": ["Dimapur", "Kohima", "Mokokchung", "Tuensang", "Wokha", "Zunheboto", "Kiphire"],
+            "Odisha": ["Bhubaneswar", "Cuttack", "Rourkela", "Brahmapur", "Sambalpur", "Puri", "Balasore", "Bhadrak", "Baripada", "Jharsuguda"],
+            "Punjab": ["Ludhiana", "Amritsar", "Jalandhar", "Patiala", "Bathinda", "Hoshiarpur", "Mohali", "Batala", "Pathankot", "Moga"],
+            "Rajasthan": ["Jaipur", "Jodhpur", "Udaipur", "Kota", "Bikaner", "Ajmer", "Bhilwara", "Alwar", "Sikar", "Pali", "Sri Ganganagar"],
+            "Sikkim": ["Gangtok", "Namchi", "Gyalshing", "Mangan", "Singtam", "Rangpo"],
+            "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem", "Tirunelveli", "Tiruppur", "Vellore", "Erode", "Thoothukudi"],
+            "Telangana": ["Hyderabad", "Warangal", "Nizamabad", "Khammam", "Karimnagar", "Ramagundam", "Mahbubnagar", "Nalgonda", "Adilabad"],
+            "Tripura": ["Agartala", "Dharmanagar", "Udaipur", "Kailashahar", "Bishalgarh", "Teliamura", "Khowai"],
+            "Uttar Pradesh": ["Lucknow", "Kanpur", "Ghaziabad", "Agra", "Varanasi", "Prayagraj", "Noida", "Meerut", "Bareilly", "Aligarh", "Moradabad", "Saharanpur"],
+            "Uttarakhand": ["Dehradun", "Haridwar", "Roorkee", "Haldwani", "Rudrapur", "Kashipur", "Rishikesh", "Pithoragarh", "Ramnagar"],
+            "West Bengal": ["Kolkata", "Howrah", "Darjeeling", "Siliguri", "Asansol", "Durgapur", "Bardhaman", "Malda", "Baharampur", "Kharagpur"],
+            "Andaman and Nicobar Islands": ["Port Blair"],
+            "Chandigarh": ["Chandigarh"],
+            "Dadra and Nagar Haveli and Daman and Diu": ["Daman", "Diu", "Silvassa"],
+            "Delhi": ["New Delhi", "North Delhi", "South Delhi", "East Delhi", "West Delhi", "Central Delhi"],
+            "Jammu and Kashmir": ["Srinagar", "Jammu", "Anantnag", "Baramulla", "Kathua", "Udhampur", "Sopore"],
+            "Lakshadweep": ["Kavaratti", "Agatti", "Minicoy"],
+            "Puducherry": ["Puducherry", "Oulgaret", "Karaikal", "Yanam", "Mahe"],
+            "Ladakh": ["Leh", "Kargil"]
+        };
+
+        function populateCities() {
+            const stateSelect = document.getElementById('state-select');
+            const citySelect = document.getElementById('city-select');
+            const selectedState = stateSelect.value;
+            citySelect.innerHTML = '<option value="" disabled selected hidden>Select City</option>';
+            if (selectedState && stateCityMap[selectedState]) {
+                const cities = stateCityMap[selectedState];
+                cities.forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city;
+                    option.textContent = city;
+                    citySelect.appendChild(option);
+                });
+                citySelect.disabled = false;
+            } else {
+                citySelect.disabled = true;
+            }
+        }
+
+        function generateToken() {
+            let nameInput = document.getElementById('user-name-input').value.trim();
+            if (!nameInput) {
+                nameInput = "STUDENT";
+            }
+            const randomId = Math.floor(1000000 + Math.random() * 9000000);
+            const randomTokenNum = Math.floor(Math.random() * 999) + 1;
+            const tokenString = "A-" + String(randomTokenNum).padStart(3, '0');
+
+            document.getElementById('final-name').innerText = `${nameInput.toUpperCase()} (${randomId})`;
+            document.getElementById('final-token').innerText = tokenString;
+
+            document.getElementById('step-4-container').classList.remove('active');
+            document.getElementById('step-5-container').classList.add('active');
+            window.scrollTo(0, 0);
+        }
+    </script>
+
+</body>
+</html>
